@@ -70,6 +70,7 @@
 
             const query = document.getElementById("query").value;
 
+            // ✅ FIXED URL (THIS IS THE MAIN THING)
             const res = await fetch(`https://ai-stock-app-uvqa.onrender.com/search?query=${query}`);
             const data = await res.json();
 
