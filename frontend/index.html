@@ -53,16 +53,6 @@
             transform: scale(1.02);
             transition: 0.2s;
         }
-
-        .bullish {
-            color: lime;
-            font-weight: bold;
-        }
-
-        .bearish {
-            color: red;
-            font-weight: bold;
-        }
     </style>
 </head>
 
@@ -80,7 +70,7 @@
 
             const query = document.getElementById("query").value;
 
-            const res = await fetch(`http://127.0.0.1:8000/search?query=${query}`);
+            const res = await fetch(`https://ai-stock-app-uvqa.onrender.com/search?query=${query}`);
             const data = await res.json();
 
             const resultsDiv = document.getElementById("results");
@@ -95,18 +85,11 @@
                     window.open(item.url, "_blank");
                 };
 
-                const sentimentClass = item.sentiment === "Bullish" ? "bullish" : "bearish";
-
                 div.innerHTML = `
                     <h3>${item.title}</h3>
-
                     <p>${item.description || ""}</p>
-
                     <p>${item.source}</p>
-
-                    <p class="${sentimentClass}">
-                        ${item.sentiment}
-                    </p>
+                    <p>${item.sentiment}</p>
                 `;
 
                 resultsDiv.appendChild(div);
