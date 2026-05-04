@@ -15,12 +15,18 @@ app.add_middleware(
 
 API_KEY = "4234ada308d3402884a1f83608eec617"
 
-# 🔥 simple sentiment function
 def get_sentiment(text):
     text = text.lower()
 
-    positive_words = ["gain", "growth", "profit", "rise", "surge", "up", "bull", "record"]
-    negative_words = ["loss", "drop", "fall", "decline", "down", "bear", "crash"]
+    positive_words = [
+        "gain", "growth", "profit", "rise", "surge", "up",
+        "bull", "record", "strong", "beat", "increase", "positive", "win"
+    ]
+
+    negative_words = [
+        "loss", "drop", "fall", "decline", "down",
+        "bear", "crash", "weak", "miss", "decrease", "negative", "risk"
+    ]
 
     score = 0
 
@@ -61,9 +67,7 @@ def search_news(query: str):
         title = article.get("title", "")
         description = article.get("description", "") or ""
 
-        full_text = f"{title} {description}"
-
-        sentiment = get_sentiment(full_text)
+        sentiment = get_sentiment(title + " " + description)
 
         results.append({
             "title": title,

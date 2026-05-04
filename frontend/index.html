@@ -5,98 +5,95 @@
 
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #0f172a, #1e293b);
+            font-family: Arial;
+            background: #0f172a;
             color: white;
             text-align: center;
-            padding: 20px;
-        }
-
-        h1 {
-            margin-top: 30px;
         }
 
         input {
             padding: 10px;
             width: 300px;
-            border-radius: 8px;
-            border: none;
         }
 
         button {
-            padding: 10px 20px;
-            margin-left: 10px;
-            border-radius: 8px;
-            border: none;
-            background: #3b82f6;
+            padding: 10px;
+            background: blue;
             color: white;
-            cursor: pointer;
-        }
-
-        .container {
-            margin-top: 30px;
-            width: 80%;
-            margin-left: auto;
-            margin-right: auto;
+            border: none;
         }
 
         .card {
             background: #1e293b;
-            padding: 20px;
-            margin: 15px 0;
-            border-radius: 12px;
-            text-align: left;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 10px;
             cursor: pointer;
         }
 
-        .card:hover {
-            transform: scale(1.02);
-            transition: 0.2s;
-        }
+        .bullish { color: lime; }
+        .bearish { color: red; }
     </style>
 </head>
 
 <body>
 
-    <h1>AI Stock News</h1>
+<h1>AI Stock News</h1>
 
-    <input id="query" placeholder="Search (Tesla, Apple...)" />
-    <button onclick="search()">Search</button>
+<input id="query" placeholder="Search Tesla..." />
+<button onclick="search()">Search</button>
 
-    <div id="results" class="container"></div>
+<div id="results"></div>
 
-    <script>
-        async function search() {
+<script>
+async function search() {
 
-            const query = document.getElementById("query").value;
+    const query = document.getElementById("query").value.trim();
 
-            // ✅ FIXED URL (THIS IS THE MAIN THING)
-            const res = await fetch(`https://ai-stock-app-uvqa.onrender.com/search?query=${query}`);
-            const data = await res.json();
+    if (!query) {
+        alert("Enter something");
+        return;
+    }
 
-            const resultsDiv = document.getElementById("results");
-            resultsDiv.innerHTML = "";
+    try {
+        const res = await fetch(`https://ai-stock-app-uvqa.onrender.com/search?query=${encodeURIComponent(query)}`);
 
-            data.results.forEach(item => {
-
-                const div = document.createElement("div");
-                div.className = "card";
-
-                div.onclick = () => {
-                    window.open(item.url, "_blank");
-                };
-
-                div.innerHTML = `
-                    <h3>${item.title}</h3>
-                    <p>${item.description || ""}</p>
-                    <p>${item.source}</p>
-                    <p>${item.sentiment}</p>
-                `;
-
-                resultsDiv.appendChild(div);
-            });
+        if (!res.ok) {
+            throw new Error("API error");
         }
-    </script>
+
+        const data = await res.json();
+
+        const div = document.getElementById("results");
+        div.innerHTML = "";
+
+        data.results.forEach(item => {
+
+            const card = document.createElement("div");
+            card.className = "card";
+
+            card.onclick = () => window.open(item.url, "_blank");
+
+            const sentimentClass =
+                item.sentiment === "Bullish" ? "bullish" :
+                item.sentiment === "Bearish" ? "bearish" : "";
+
+            card.innerHTML = `
+                <h3>${item.title}</h3>
+                <p>${item.description}</p>
+                <p>${item.source}</p>
+                <p class="${sentimentClass}">${item.sentiment}</p>
+            `;
+
+            div.appendChild(card);
+        });
+
+    } catch (err) {
+        alert("Error loading data");
+        console.error(err);
+    }
+}
+</script>
 
 </body>
 </html>
